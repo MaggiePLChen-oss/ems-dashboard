@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS/ODM 產業月報 | Strategy Intelligence</title>
+    <!-- 引入 Tailwind CSS 與 Chart.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .active-nav { background-color: #2563eb; color: white; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased flex h-screen overflow-hidden">
+
+    <!-- 已經為您填寫好的 4 個 Google Sheets CSV 網址 -->
+    <script>
+        const URL_OVERVIEW  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRecDSXCPWvJcWPzS8y7cXDwyArgCBam8GZSDi7brBO_3H9iHCyc023K1QPm3_s3g/pub?gid=253112353&single=true&output=csv";
+        const URL_FINANCIAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRecDSXCPWvJcWPzS8y7cXDwyArgCBam8GZSDi7brBO_3H9iHCyc023K1QPm3_s3g/pub?gid=166596044&single=true&output=csv";
+        const URL_CHARTS    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRecDSXCPWvJcWPzS8y7cXDwyArgCBam8GZSDi7brBO_3H9iHCyc023K1QPm3_s3g/pub?gid=1888504608&single=true&output=csv";
+        const URL_WATCHLIST = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRecDSXCPWvJcWPzS8y7cXDwyArgCBam8GZSDi7brBO_3H9iHCyc023K1QPm3_s3g/pub?gid=1914572584&single=true&output=csv";
+    </script>
+
+    <!-- 左側導覽列 Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex flex-col hidden md:flex shadow-xl z-20">
+        <div class="p-6 border-b border-slate-700">
+            <h1 class="text-2xl font-bold text-blue-400">FIH</h1>
+            <p class="text-sm text-slate-400 mt-1">Strategy Intelligence</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">本月報告</p>
+            <a href="#hero" class="block py-2 px-4 rounded transition hover:bg-slate-800">概覽</a>
+            <a href="#financial" class="block py-2 px-4 rounded transition hover:bg-slate-800">財務儀表板</a>
+            <a href="#chart-sec" class="block py-2 px-4 rounded transition hover:bg-slate-800">走勢分析</a>
+            <a href="#news" class="block py-2 px-4 rounded transition hover:bg-slate-800">廠商動態</a>
+            <a href="#watchlist" class="block py-2 px-4 rounded transition hover:bg-slate-800">關注議題</a>
+            
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2">過去月報</p>
+            <a href="#" class="block py-2 px-4 rounded text-slate-500 cursor-not-allowed">2026年5月</a>
+            <a href="#" class="block py-2 px-4 rounded text-slate-500 cursor-not-allowed">2026年4月</a>
+        </nav>
+        <div class="p-4 border-t border-slate-700 text-xs text-slate-500">
+            自動同步中
+        </div>
+    </aside>
+
+    <!-- 右側主要內容區 Main Content -->
+    <main class="flex-1 h-full overflow-y-auto scroll-smooth relative">
+        
+        <!-- 頂部 Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-10 px-8 py-4 flex justify-between items-center border-b border-slate-100">
+            <div>
+                <h2 class="text-xl font-bold text-slate-800">全球 EMS/ODM 產業月報</h2>
+                <p class="text-sm text-slate-500">涵蓋主要廠商 · 財務 + 策略 + 風險全追蹤</p>
+            </div>
+            <div id="update-status" class="text-sm bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium">
+                ⏳ 正在連接 Google Sheets 數據源...
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto space-y-10">
+
+            <!-- 1. 本月概覽 (Hero Section) -->
+            <section id="hero" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
+                    <h3 class="text-base font-bold mb-2 text-slate-900 flex items-center">📈 財務面</h3>
+                    <p id="text-financial-overview" class="text-sm text-slate-600 leading-relaxed">正在載入數據...</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-purple-500">
+                    <h3 class="text-base font-bold mb-2 text-slate-900 flex items-center">🎯 策略面</h3>
+                    <p id="text-strategy-overview" class="text-sm text-slate-600 leading-relaxed">正在載入數據...</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 border-l-4 border-l-red-500">
+                    <h3 class="text-base font-bold mb-2 text-slate-900 flex items-center">⚠️ Risks 風險面</h3>
+                    <p id="text-risk-overview" class="text-sm text-slate-600 leading-relaxed">正在載入數據...</p>
+                </div>
+            </section>
+
+            <!-- 2. 財務儀表板 (Financial Dashboard) -->
+            <section id="financial" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">財務儀表板</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">真實財務數據 · 自動從試算表函數同步</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs text-slate-500 font-medium whitespace-nowrap">地區篩選：</label>
+                        <select id="region-filter" onchange="filterFinancialTable()" class="bg-slate-50 border border-slate-200 text-xs rounded-lg px-3 py-2 outline-none focus:border-blue-500">
+                            <option value="全部">全部地區</option>
+                            <option value="台灣">台灣 TW</option>
+                            <option value="中國">中國 CN / 香港</option>
+                            <option value="美國">美國 US</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-50 text-slate-600 border-b border-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 font-semibold rounded-tl-lg">公司 ↕</th>
+                                <th class="px-4 py-3 font-semibold text-center">交易所代號</th>
+                                <th class="px-4 py-3 font-semibold text-right">市值 USD B ↓</th>
+                                <th class="px-4 py-3 font-semibold text-right">營收 (YoY) 最新季報</th>
+                                <th class="px-4 py-3 font-semibold text-right">毛利率 %</th>
+                                <th class="px-4 py-3 font-semibold text-right">營業利益率 %</th>
+                                <th class="px-4 py-3 font-semibold text-right">EPS (USD)</th>
+                                <th class="px-4 py-3 font-semibold text-right rounded-tr-lg">P/E TTM</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financial-table-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+                            <tr>
+                                <td colspan="8" class="px-4 py-8 text-center text-slate-400 text-xs">正在從雲端同步即時財務數據...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 3. 走勢分析 (Chart Section) -->
+            <section id="chart-sec" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-slate-900">走勢分析</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">最近 6 季營運趨勢（真實財報數據）</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="p-4 border border-slate-50 rounded-xl bg-slate-50/50">
+                        <p class="text-xs font-bold text-slate-500 mb-2 text-center">營收與伺服器比重走勢</p>
+                        <div class="h-64"><canvas id="chart-revenue"></canvas></div>
+                    </div>
+                    <div class="p-4 border border-slate-50 rounded-xl bg-slate-50/50">
+                        <p class="text-xs font-bold text-slate-500 mb-2 text-center">利潤率走勢趨勢</p>
+                        <div class="h-64"><canvas id="chart-margins"></canvas></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 廠商動態 (News Section) -->
+            <section id="news" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="text-lg font-bold text-slate-900 mb-3">廠商動態</h3>
+                <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-100 text-sm text-slate-700 leading-relaxed" id="text-news-overview">
+                    正在載入本月重要併購與動態摘要...
+                </div>
+            </section>
+
+            <!-- 5. 關注議題 (Watchlist Section) -->
+            <section id="watchlist" class="space-y-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">關注議題</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">EMS/ODM 族群以外的關鍵鏈條變數</p>
+                </div>
+                <div id="watchlist-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- 卡片會由 JavaScript 動態寫入 -->
+                    <div class="text-slate-400 text-xs py-4">正在加載議題卡片...</div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="border-t border-slate-200 pt-6 pb-8 text-center text-xs text-slate-400 space-y-1">
+                <div>FIH Mobile Limited · Strategy Office · 產業情報觀測儀表板</div>
+                <div>數據來源：Google Sheets 雲端即時同步 · Yahoo Finance 自動串接</div>
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- 核心數據處理腳本 -->
+    <script>
+        let financialRawData = [];
+
+        // 輔助函式：安全解析含雙引號的 CSV 欄位
+        function parseCSVRow(rowText) {
+            let cells = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < rowText.length; i++) {
+                let char = rowText[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    cells.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            cells.push(current.trim());
+            return cells;
+        }
+
+        // 初始化所有區塊的載入
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await Promise.all([
+                    loadOverviewAndNews(),
+                    loadFinancialData(),
+                    loadChartsData(),
+                    loadWatchlistData()
+                ]);
+                
+                const status = document.getElementById('update-status');
+                status.className = "text-sm bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium";
+                status.innerText = "● 每日數據已成功與雲端同步";
+            } catch (err) {
+                console.error(err);
+                document.getElementById('update-status').className = "text-sm bg-red-100 text-red-800 px-3 py-1 rounded-full font-medium";
+                document.getElementById('update-status').innerText = "❌ 資料載入異常，請確認試算表已正確發布";
+            }
+        });
+
+        // 1. 載入概覽與廠商動態
+        async function loadOverviewAndNews() {
+            const res = await fetch(URL_OVERVIEW);
+            const text = await res.text();
+            const lines = text.split('\n');
+            
+            lines.forEach(line => {
+                if(!line.trim()) return;
+                const cols = parseCSVRow(line);
+                const blockType = cols[0];
+                const content = cols[1] ? cols[1].replace(/^"|"$/g, '') : '';
+                
+                if (blockType.includes("財務面")) document.getElementById('text-financial-overview').innerText = content;
+                if (blockType.includes("策略面")) document.getElementById('text-strategy-overview').innerText = content;
+                if (blockType.includes("風險面")) document.getElementById('text-risk-overview').innerText = content;
+                if (blockType.includes("廠商動態")) document.getElementById('text-news-overview').innerText = content;
+            });
+        }
+
+        // 2. 載入並渲染財務表格
+        async function loadFinancialData() {
+            const res = await fetch(URL_FINANCIAL);
+            const text = await res.text();
+            const lines = text.split('\n');
+            
+            financialRawData = [];
+            
+            for(let i = 4; i < lines.length; i++) {
+                if(!lines[i].trim()) continue;
+                const cols = parseCSVRow(lines[i]);
+                if(cols.length < 9 || !cols[0]) continue;
+                
+                financialRawData.push({
+                    name: cols[0].replace(/^"|"$/g, ''),
+                    code: cols[1],
+                    region: cols[2],
+                    marketCap: cols[3],
+                    yoy: cols[4],
+                    margin: cols[5],
+                    opMargin: cols[6],
+                    eps: cols[7],
+                    pe: cols[8]
+                });
+            }
+            renderFinancialTable(financialRawData);
+        }
+
+        function renderFinancialTable(dataList) {
+            const tbody = document.getElementById('financial-table-body');
+            tbody.innerHTML = '';
+            
+            if(dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-4 text-center text-slate-400 text-xs">無符合該地區的廠商數據</td></tr>`;
+                return;
+            }
+
+            dataList.forEach(item => {
+                const formatPct = (val) => {
+                    let num = parseFloat(val);
+                    if(isNaN(num)) return val;
+                    if(num < 1 && num > -1) num = num * 100;
+                    return num.toFixed(1) + '%';
+                };
+                
+                const formatNum = (val, fixed = 2) => {
+                    let num = parseFloat(val);
+                    return isNaN(num) ? val : num.toFixed(fixed);
+                };
+
+                const yoyNum = parseFloat(item.yoy);
+                const yoyColor = yoyNum > 0 ? 'text-red-600' : (yoyNum < 0 ? 'text-green-600' : 'text-slate-600');
+                const yoySign = yoyNum > 0 ? '+' : '';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="px-4 py-3.5 font-bold text-slate-900">${item.name}</td>
+                        <td class="px-4 py-3.5 text-center text-slate-400 text-xs">${item.code}</td>
+                        <td class="px-4 py-3.5 text-right font-semibold">${formatNum(item.marketCap)} B</td>
+                        <td class="px-4 py-3.5 text-right ${yoyColor}">${yoySign}${formatPct(item.yoy)}</td>
+                        <td class="px-4 py-3.5 text-right">${formatPct(item.margin)}</td>
+                        <td class="px-4 py-3.5 text-right">${formatPct(item.opMargin)}</td>
+                        <td class="px-4 py-3.5 text-right text-slate-600">${formatNum(item.eps)}</td>
+                        <td class="px-4 py-3.5 text-right text-slate-600">${formatNum(item.pe, 1)}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function filterFinancialTable() {
+            const selectedRegion = document.getElementById('region-filter').value;
+            if(selectedRegion === '全部') {
+                renderFinancialTable(financialRawData);
+            } else {
+                const filtered = financialRawData.filter(item => item.region.includes(selectedRegion));
+                renderFinancialTable(filtered);
+            }
+        }
+
+        // 3. 載入趨勢數據並繪製 Chart.js
+        async function loadChartsData() {
+            const res = await fetch(URL_CHARTS);
+            const text = await res.text();
+            const lines = text.split('\n');
+            
+            let labels = [];
+            let aiServerRatio = [];
+            let industryMedianMargin = [];
+            let quantaRev = [];
+
+            for(let i = 4; i < lines.length; i++) {
+                if(!lines[i].trim()) continue;
+                const cols = parseCSVRow(lines[i]);
+                if(cols.length < 5) continue;
+                
+                labels.push(cols[0]);
+                aiServerRatio.push(parseFloat(cols[1]) * 100);
+                industryMedianMargin.push(parseFloat(cols[2]) * 100);
+                quantaRev.push(parseFloat(cols[3]));
+            }
+
+            new Chart(document.getElementById('chart-revenue').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: '廣達營收 (USD B)', data: quantaRev, backgroundColor: '#3b82f6', yAxisID: 'y' },
+                        { label: '廣達 AI 伺服器比重 (%)', data: aiServerRatio, type: 'line', borderColor: '#ef4444', borderWidth: 3, fill: false, yAxisID: 'y1' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { position: 'left', title: { display: true, text: '營收 (B)' } },
+                        y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '比重 (%)' } }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('chart-margins').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '族群毛利率中位數 (%)',
+                        data: industryMedianMargin,
+                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        fill: true,
+                        tension: 0.2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { title: { display: true, text: '百分比 (%)' } } }
+                }
+            });
+        }
+
+        // 4. 載入關注議題卡片
+        async function loadWatchlistData() {
+            const res = await fetch(URL_WATCHLIST);
+            const text = await res.text();
+            const lines = text.split('\n');
+            const grid = document.getElementById('watchlist-grid');
+            grid.innerHTML = '';
+
+            for(let i = 3; i < lines.length; i++) {
+                if(!lines[i].trim()) continue;
+                const cols = parseCSVRow(lines[i]);
+                if(cols.length < 5) continue;
+
+                const tag = cols[0].replace(/^"|"$/g, '');
+                const title = cols[1].replace(/^"|"$/g, '');
+                const content = cols[2].replace(/^"|"$/g, '');
+                const linkText = cols[3].replace(/^"|"$/g, '');
+                const url = cols[4].replace(/^"|"$/g, '');
+
+                grid.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <span class="text-[11px] font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">${tag}</span>
+                            <h4 class="font-bold text-base text-slate-900 mt-3 mb-2">${title}</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">${content}</p>
+                        </div>
+                        <a href="${url}" target="_blank" class="text-blue-600 text-xs font-semibold mt-4 inline-flex items-center hover:underline">
+                            ${linkText}
+                        </a>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
