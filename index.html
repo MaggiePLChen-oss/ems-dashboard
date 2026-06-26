@@ -180,7 +180,6 @@
 
     <!-- 🛠️ 數據自動同步與解析引擎 -->
     <script>
-        // 核心 CSV 解析器 (相容雙引號和換行防呆)
         function parseCSV(text) {
             let lines = [];
             let row = [""];
@@ -205,13 +204,12 @@
             return lines;
         }
 
-        let allFinancialData = []; // 快取完整財務資料供篩選使用
+        let allFinancialData = [];
 
         window.addEventListener('DOMContentLoaded', async () => {
             const badge = document.getElementById('status-badge');
             
             try {
-                // 同步加載四個 Google 試算表資料來源
                 const [resOverview, resFinancial, resCharts, resWatchlist] = await Promise.all([
                     fetch(URL_OVERVIEW).then(r => r.text()),
                     fetch(URL_FINANCIAL).then(r => r.text()),
@@ -219,37 +217,30 @@
                     fetch(URL_WATCHLIST).then(r => r.text())
                 ]);
 
-                // 1. 解析與渲染三大核心面向 (Overview)
                 const dataOverview = parseCSV(resOverview);
                 if (dataOverview.length > 1) {
-                    // 假設欄位順序為：財務摘要, 策略摘要, 風險摘要
                     document.getElementById('txt-financial').textContent = dataOverview[1][0] || "暫無數據";
                     document.getElementById('txt-strategy').textContent = dataOverview[1][1] || "暫無數據";
                     document.getElementById('txt-risks').textContent = dataOverview[1][2] || "暫無數據";
                 }
 
-                // 2. 解析與快取財務數據 (Financial)
                 const dataFinancial = parseCSV(resFinancial);
                 if (dataFinancial.length > 1) {
-                    const headers = dataFinancial[0];
                     allFinancialData = dataFinancial.slice(1).filter(r => r[0] && r[0].trim() !== "");
                     renderFinancialTable(allFinancialData);
-                    renderDynamics(allFinancialData); // 動態點評與財務表格共用基礎資料
+                    renderDynamics(allFinancialData);
                 }
 
-                // 3. 解析與建立圖表走勢 (Charts)
                 const dataCharts = parseCSV(resCharts);
                 if (dataCharts.length > 1) {
                     buildCharts(dataCharts);
                 }
 
-                // 4. 解析與渲染關注議題 (Watchlist)
                 const dataWatchlist = parseCSV(resWatchlist);
                 if (dataWatchlist.length > 1) {
                     renderWatchlist(dataWatchlist.slice(1));
                 }
 
-                // 更新狀態為成功
                 badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
                 badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> 雲端數據已即時同步';
 
@@ -260,7 +251,6 @@
             }
         });
 
-        // 渲染財務表格
         function renderFinancialTable(rows) {
             const tbody = document.getElementById('financial-tbody');
             tbody.innerHTML = '';
@@ -271,7 +261,6 @@
             }
 
             rows.forEach(row => {
-                // 欄位對應：0:公司, 1:代碼, 2:市值, 3:營收YoY, 4:毛利, 5:營利, 6:EPS, 7:PE, 8:地區
                 const yoyValue = parseFloat(row[3]) || 0;
                 const yoyClass = yoyValue >= 0 ? "text-emerald-600 font-semibold" : "text-rose-600 font-semibold";
                 const yoyIcon = yoyValue >= 0 ? "▲" : "▼";
@@ -292,24 +281,20 @@
             });
         }
 
-        // 篩選監聽器
         document.getElementById('region-filter').addEventListener('change', (e) => {
             const region = e.target.value;
             if (region === '全部地區') {
                 renderFinancialTable(allFinancialData);
             } else {
-                // 假設第 8 欄 (索引8) 是地區
                 const filtered = allFinancialData.filter(row => row[8] && row[8].trim() === region);
                 renderFinancialTable(filtered);
             }
         });
 
-        // 渲染廠商點評
         function renderDynamics(rows) {
             const container = document.getElementById('dynamics-container');
             container.innerHTML = '';
             
-            // 篩選出有填寫點評（假設第 9 欄索引9為動態點評欄位）的公司
             rows.forEach(row => {
                 const comment = row[9];
                 if (comment && comment.trim() !== "") {
@@ -331,13 +316,11 @@
             }
         }
 
-        // 渲染追蹤議題卡片
         function renderWatchlist(rows) {
             const container = document.getElementById('watchlist-container');
             container.innerHTML = '';
 
             rows.forEach(row => {
-                // 欄位對應：0:議題名稱, 1:狀態/標籤, 2:詳細分析內容, 3:風險級別顏色
                 if (!row[0]) return;
                 
                 let badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
@@ -359,12 +342,9 @@
             });
         }
 
-        // 建立走勢圖表 (Chart.js)
         function buildCharts(csvRows) {
-            // 預期 CSV 格式首欄為季度，其餘為數據欄
             const quarters = csvRows.slice(1).map(r => r[0]);
             
-            // 營收與比重走勢
             const ctxRev = document.getElementById('chart-revenue').getContext('2d');
             new Chart(ctxRev, {
                 type: 'bar',
@@ -402,7 +382,6 @@
                 }
             });
 
-            // 利潤率趨勢
             const ctxMargin = document.getElementById('chart-margin').getContext('2d');
             new Chart(ctxMargin, {
                 type: 'line',
