@@ -4,32 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全球 EMS/ODM 產業月報儀表板</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-        }
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
     </style>
 </head>
 <body class="flex min-h-screen text-slate-800">
 
-    <!-- 🌟 JavaScript 雲端資料庫設定區 -->
     <script>
-        // 您新帳號的 Google 試算表 CSV 發布網址
         const URL_OVERVIEW  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJ5cOc7DHAfiy1OfVSmkM2ZlLNdfvuzBn2AuAyzjn6jTcCaLnFRcsuvk0tvnVf-g/pub?gid=867906464&single=true&output=csv";
         const URL_FINANCIAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJ5cOc7DHAfiy1OfVSmkM2ZlLNdfvuzBn2AuAyzjn6jTcCaLnFRcsuvk0tvnVf-g/pub?gid=1694502489&single=true&output=csv";
         const URL_CHARTS    = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJ5cOc7DHAfiy1OfVSmkM2ZlLNdfvuzBn2AuAyzjn6jTcCaLnFRcsuvk0tvnVf-g/pub?gid=1095784791&single=true&output=csv";
         const URL_WATCHLIST = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTJ5cOc7DHAfiy1OfVSmkM2ZlLNdfvuzBn2AuAyzjn6jTcCaLnFRcsuvk0tvnVf-g/pub?gid=847666220&single=true&output=csv";
     </script>
 
-    <!-- 側邊導覽列 -->
     <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col fixed h-full z-10">
         <div class="p-6 border-b border-slate-800">
             <h1 class="text-xl font-bold text-white tracking-wider flex items-center gap-2">
@@ -54,56 +45,41 @@
             <a href="#watchlist" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition">
                 <i class="fa-solid fa-star w-5 text-center"></i> 關注議題
             </a>
-            
-            <p class="text-xs font-semibold text-slate-500 px-3 uppercase tracking-wider pt-6 mb-2">過去月報</p>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-slate-200">2026年5月</a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-400 hover:text-slate-200">2026年4月</a>
         </nav>
     </aside>
 
-    <!-- 主要內容區 -->
     <main class="flex-1 ml-64 p-8 max-w-7xl">
-        <!-- 頂部標頭 -->
         <header class="flex justify-between items-center mb-8 pb-4 border-b border-slate-200">
             <div>
                 <h2 class="text-2xl font-bold text-slate-900">全球 EMS/ODM 產業月報</h2>
                 <p class="text-sm text-slate-500 mt-0.5">涵蓋主要廠商 ・ 財務 + 策略 + 風險全追蹤</p>
             </div>
-            <!-- 狀態提示 -->
             <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                 <i class="fa-solid fa-spinner animate-spin"></i> 正在連線雲端資料庫...
             </div>
         </header>
 
-        <!-- 1️⃣ 三大面向核心概覽 -->
         <section id="overview" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- 財務面 -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-blue-600">
                 <div class="flex items-center gap-3 mb-3 text-blue-600">
-                    <i class="fa-solid fa-chart-pie text-lg"></i>
-                    <h3 class="font-bold">財務面</h3>
+                    <i class="fa-solid fa-chart-pie text-lg"></i><h3 class="font-bold">財務面</h3>
                 </div>
                 <p id="txt-financial" class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">正在載入數據...</p>
             </div>
-            <!-- 策略面 -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-purple-600">
                 <div class="flex items-center gap-3 mb-3 text-purple-600">
-                    <i class="fa-solid fa-bullseye text-lg"></i>
-                    <h3 class="font-bold">策略面</h3>
+                    <i class="fa-solid fa-bullseye text-lg"></i><h3 class="font-bold">策略面</h3>
                 </div>
                 <p id="txt-strategy" class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">正在載入數據...</p>
             </div>
-            <!-- 風險面 -->
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs border-l-4 border-l-rose-600">
                 <div class="flex items-center gap-3 mb-3 text-rose-600">
-                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                    <h3 class="font-bold">Risks 風險面</h3>
+                    <i class="fa-solid fa-triangle-exclamation text-lg"></i><h3 class="font-bold">Risks 風險面</h3>
                 </div>
                 <p id="txt-risks" class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">正在載入數據...</p>
             </div>
         </section>
 
-        <!-- 2️⃣ 財務大盤儀表板 -->
         <section id="financial" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 mb-8">
             <div class="flex justify-between items-center mb-4">
                 <div>
@@ -112,55 +88,50 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <label class="text-xs text-slate-500">地區篩選：</label>
-                    <select id="region-filter" class="text-xs border border-slate-300 rounded-lg p-1.5 bg-white shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select id="region-filter" class="text-xs border border-slate-300 rounded-lg p-1.5 bg-white shadow-xs focus:outline-none">
                         <option value="全部地區">全部地區</option>
                         <option value="台灣">台灣</option>
-                        <option value="中國大陸">中國大陸</option>
-                        <option value="其他">其他</option>
+                        <option value="中國">中國</option>
+                        <option value="美國">美國</option>
                     </select>
                 </div>
             </div>
-            
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
-                            <th class="p-3">公司 <i class="fa-solid fa-sort text-slate-300 ml-1"></i></th>
-                            <th class="p-3">交易所代碼</th>
-                            <th class="p-3">市值 USD B <i class="fa-solid fa-arrow-down-long text-blue-500 ml-1"></i></th>
-                            <th class="p-3">營收 (YoY) 最新季</th>
-                            <th class="p-3">毛利率 %</th>
-                            <th class="p-3">營業利益率 %</th>
-                            <th class="p-3">EPS (USD)</th>
-                            <th class="p-3">P/E TTM</th>
+                            <th class="p-3">公司</th>
+                            <th class="p-3 text-center">交易所代碼</th>
+                            <th class="p-3 text-right">市值 USD B</th>
+                            <th class="p-3 text-right">營收 (YoY) 最新季</th>
+                            <th class="p-3 text-right">毛利率 %</th>
+                            <th class="p-3 text-right">營業利益率 %</th>
+                            <th class="p-3 text-right">EPS (USD)</th>
+                            <th class="p-3 text-right">P/E TTM</th>
                         </tr>
                     </thead>
                     <tbody id="financial-tbody" class="divide-y divide-slate-100 text-slate-700">
-                        <tr>
-                            <td colspan="8" class="p-8 text-center text-slate-400">正在從雲端同步即時財務數據...</td>
-                        </tr>
+                        <tr><td colspan="8" class="p-8 text-center text-slate-400">正在從雲端同步即時財務數據...</td></tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- 3️⃣ 趨勢與走勢圖表 -->
         <section id="trends" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 mb-8">
             <h3 class="text-lg font-bold text-slate-900 mb-1">走勢分析</h3>
-            <p class="text-xs text-slate-400 mb-6">最近 6 季營運趨勢（真實財報數據）</p>
+            <p class="text-xs text-slate-400 mb-6">最近營運趨勢（真實財報數據）</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="text-sm font-semibold text-slate-700 text-center mb-3">營收與伺服器比重走勢</h4>
-                    <canvas id="chart-revenue" class="w-full h-64"></canvas>
+                    <div class="relative w-full h-64"><canvas id="chart-revenue"></canvas></div>
                 </div>
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                     <h4 class="text-sm font-semibold text-slate-700 text-center mb-3">利潤率走勢趨勢</h4>
-                    <canvas id="chart-margin" class="w-full h-64"></canvas>
+                    <div class="relative w-full h-64"><canvas id="chart-margin"></canvas></div>
                 </div>
             </div>
         </section>
 
-        <!-- 4️⃣ 焦點廠商動態 -->
         <section id="dynamics" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 mb-8">
             <h3 class="text-lg font-bold text-slate-900 mb-4">主要廠商動態點評</h3>
             <div id="dynamics-container" class="space-y-4">
@@ -168,25 +139,20 @@
             </div>
         </section>
 
-        <!-- 5️⃣ 關注議題追蹤 -->
         <section id="watchlist" class="bg-white rounded-2xl border border-slate-200 shadow-xs p-6">
             <h3 class="text-lg font-bold text-slate-900 mb-1">主要追蹤與關注議題</h3>
             <p class="text-xs text-slate-400 mb-4">當前市場核心變數與潛在影響</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="watchlist-container">
-                <div class="p-4 text-center col-span-2 text-slate-400">正在加載核心議題...</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="watchlist-container">
+                <div class="p-4 text-center col-span-full text-slate-400">正在加載核心議題...</div>
             </div>
         </section>
     </main>
 
-    <!-- 🛠️ 數據自動同步與解析引擎 -->
     <script>
         function parseCSV(text) {
-            let lines = [];
-            let row = [""];
-            let inQuotes = false;
+            let lines = []; let row = [""]; let inQuotes = false;
             for (let i = 0; i < text.length; i++) {
-                let c = text[i];
-                let next = text[i+1];
+                let c = text[i]; let next = text[i+1];
                 if (c === '"') {
                     if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
                     else { inQuotes = !inQuotes; }
@@ -194,8 +160,7 @@
                     row.push('');
                 } else if ((c === '\r' || c === '\n') && !inQuotes) {
                     if (c === '\r' && next === '\n') { i++; }
-                    lines.push(row);
-                    row = [""];
+                    lines.push(row); row = [""];
                 } else {
                     row[row.length - 1] += c;
                 }
@@ -208,7 +173,6 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             const badge = document.getElementById('status-badge');
-            
             try {
                 const [resOverview, resFinancial, resCharts, resWatchlist] = await Promise.all([
                     fetch(URL_OVERVIEW).then(r => r.text()),
@@ -217,65 +181,71 @@
                     fetch(URL_WATCHLIST).then(r => r.text())
                 ]);
 
+                // 🔍 修正後的 Overview 直式解析邏輯 (A2=財務, A3=策略, A4=風險)
                 const dataOverview = parseCSV(resOverview);
-                if (dataOverview.length > 1) {
+                if (dataOverview.length >= 4) {
                     document.getElementById('txt-financial').textContent = dataOverview[1][0] || "暫無數據";
-                    document.getElementById('txt-strategy').textContent = dataOverview[1][1] || "暫無數據";
-                    document.getElementById('txt-risks').textContent = dataOverview[1][2] || "暫無數據";
+                    document.getElementById('txt-strategy').textContent  = dataOverview[2][0] || "暫無數據";
+                    document.getElementById('txt-risks').textContent     = dataOverview[3][0] || "暫無數據";
                 }
 
+                // 📊 Financial & Dynamics Parser (跳過前面4行標頭，資料從第5行 index 4 開始)
                 const dataFinancial = parseCSV(resFinancial);
-                if (dataFinancial.length > 1) {
-                    allFinancialData = dataFinancial.slice(1).filter(r => r[0] && r[0].trim() !== "");
+                if (dataFinancial.length > 4) {
+                    allFinancialData = [];
+                    for(let i=4; i<dataFinancial.length; i++) {
+                        let row = dataFinancial[i];
+                        if(row[0] && row[0].trim() !== "") {
+                            allFinancialData.push({
+                                name: row[0].trim(), code: row[1] || '', region: row[2] || '',
+                                marketCap: row[3] || '0', yoy: row[4] || '0%', margin: row[5] || '0%',
+                                opMargin: row[6] || '0%', eps: row[7] || '0', pe: row[8] || '0', comment: row[9] || ''
+                            });
+                        }
+                    }
                     renderFinancialTable(allFinancialData);
                     renderDynamics(allFinancialData);
                 }
 
+                // 📈 Charts Parser (資料從第5行 index 4 開始)
                 const dataCharts = parseCSV(resCharts);
-                if (dataCharts.length > 1) {
-                    buildCharts(dataCharts);
+                if (dataCharts.length > 4) {
+                    buildCharts(dataCharts.slice(4));
                 }
 
+                // 📌 Watchlist Parser (資料從第4行 index 3 開始)
                 const dataWatchlist = parseCSV(resWatchlist);
-                if (dataWatchlist.length > 1) {
-                    renderWatchlist(dataWatchlist.slice(1));
+                if (dataWatchlist.length > 3) {
+                    renderWatchlist(dataWatchlist.slice(3));
                 }
 
                 badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200";
                 badge.innerHTML = '<i class="fa-solid fa-circle-check"></i> 雲端數據已即時同步';
 
             } catch (error) {
-                console.error("資料載入失敗：", error);
+                console.error(error);
                 badge.className = "flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200";
-                badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 資料載入異常，請確認試算表已正確發布';
+                badge.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> 資料載入異常，請確認試算表格式';
             }
         });
 
         function renderFinancialTable(rows) {
-            const tbody = document.getElementById('financial-tbody');
-            tbody.innerHTML = '';
-
-            if (rows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400">目前無對應地區的廠商數據</td></tr>`;
-                return;
-            }
-
+            const tbody = document.getElementById('financial-tbody'); tbody.innerHTML = '';
             rows.forEach(row => {
-                const yoyValue = parseFloat(row[3]) || 0;
-                const yoyClass = yoyValue >= 0 ? "text-emerald-600 font-semibold" : "text-rose-600 font-semibold";
-                const yoyIcon = yoyValue >= 0 ? "▲" : "▼";
-
+                const yoyNum = parseFloat(row.yoy) || 0;
+                const yoyClass = yoyNum >= 0 ? "text-rose-600 font-semibold" : "text-emerald-600 font-semibold";
+                const yoyIcon = yoyNum >= 0 ? "▲" : "▼";
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
                 tr.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-900">${row[0]}</td>
-                    <td class="p-3 text-xs text-slate-400 font-mono">${row[1]}</td>
-                    <td class="p-3 font-medium">${row[2]} B</td>
-                    <td class="p-3 ${yoyClass}">${yoyIcon} ${row[3]}</td>
-                    <td class="p-3">${row[4]}</td>
-                    <td class="p-3">${row[5]}</td>
-                    <td class="p-3 font-mono">${row[6]}</td>
-                    <td class="p-3"><span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded">${row[7]}</span></td>
+                    <td class="p-3.5 font-bold text-slate-900">\${row.name}</td>
+                    <td class="p-3.5 text-center text-xs text-slate-400 font-mono">\${row.code}</td>
+                    <td class="p-3.5 text-right font-semibold">\${row.marketCap} B</td>
+                    <td class="p-3.5 text-right \${yoyClass}">\${yoyIcon} \${row.yoy}</td>
+                    <td class="p-3.5 text-right">	ext{\${row.margin}}</td>
+                    <td class="p-3.5 text-right">	ext{\${row.opMargin}}</td>
+                    <td class="p-3.5 text-right font-mono text-slate-600">\${row.eps}</td>
+                    <td class="p-3.5 text-right font-mono text-slate-600">\${row.pe}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -283,103 +253,46 @@
 
         document.getElementById('region-filter').addEventListener('change', (e) => {
             const region = e.target.value;
-            if (region === '全部地區') {
-                renderFinancialTable(allFinancialData);
-            } else {
-                const filtered = allFinancialData.filter(row => row[8] && row[8].trim() === region);
-                renderFinancialTable(filtered);
-            }
+            if (region === '全部地區') renderFinancialTable(allFinancialData);
+            else renderFinancialTable(allFinancialData.filter(row => row.region.includes(region)));
         });
 
         function renderDynamics(rows) {
-            const container = document.getElementById('dynamics-container');
-            container.innerHTML = '';
-            
+            const container = document.getElementById('dynamics-container'); container.innerHTML = '';
             rows.forEach(row => {
-                const comment = row[9];
-                if (comment && comment.trim() !== "") {
+                if (row.comment && row.comment.trim() !== "") {
                     const card = document.createElement('div');
                     card.className = "p-4 bg-slate-50 border border-slate-100 rounded-xl";
-                    card.innerHTML = `
-                        <div class="flex items-center gap-2 mb-1.5">
-                            <span class="font-bold text-slate-900 text-sm">${row[0]}</span>
-                            <span class="text-xs font-mono text-slate-400">${row[1]}</span>
-                        </div>
-                        <p class="text-xs text-slate-600 leading-relaxed">${comment}</p>
-                    `;
+                    card.innerHTML = `<div class="flex items-center gap-2 mb-1.5"><span class="font-bold text-slate-900 text-sm">\${row.name}</span></div><p class="text-xs text-slate-600 leading-relaxed">\${row.comment}</p>`;
                     container.appendChild(card);
                 }
             });
-            
-            if (container.children.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">本月暫無個別廠商動態更新</p>`;
-            }
         }
 
         function renderWatchlist(rows) {
-            const container = document.getElementById('watchlist-container');
-            container.innerHTML = '';
-
+            const container = document.getElementById('watchlist-container'); container.innerHTML = '';
             rows.forEach(row => {
-                if (!row[0]) return;
-                
-                let badgeColor = "bg-amber-100 text-amber-800 border-amber-200";
-                if (row[3] === "高") badgeColor = "bg-rose-100 text-rose-800 border-rose-200";
-                if (row[3] === "低") badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-200";
-
+                if (!row[1]) return;
                 const card = document.createElement('div');
-                card.className = "p-5 border border-slate-100 rounded-xl bg-gradient-to-b from-white to-slate-50/30 shadow-2xs";
-                card.innerHTML = `
-                    <div class="flex justify-between items-start gap-4 mb-2.5">
-                        <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-circle-dot text-blue-500 text-xs"></i> ${row[0]}
-                        </h4>
-                        <span class="text-[10px] font-medium px-2 py-0.5 rounded-full border ${badgeColor}">${row[1] || '追蹤中'}</span>
-                    </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${row[2] || ''}</p>
-                `;
+                card.className = "p-5 border border-slate-200 rounded-xl bg-white shadow-2xs flex flex-col justify-between";
+                card.innerHTML = `<div><span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">\${row[0]||'追蹤'}</span><h4 class="font-bold text-slate-900 text-sm mt-3 mb-1.5">\${row[1]}</h4><p class="text-xs text-slate-500 leading-relaxed">\${row[2]||''}</p></div>`;
                 container.appendChild(card);
             });
         }
 
-        function buildCharts(csvRows) {
-            const quarters = csvRows.slice(1).map(r => r[0]);
-            
+        function buildCharts(rows) {
+            const quarters = rows.map(r => r[0] ? r[0].trim() : '');
             const ctxRev = document.getElementById('chart-revenue').getContext('2d');
             new Chart(ctxRev, {
                 type: 'bar',
                 data: {
                     labels: quarters,
                     datasets: [
-                        {
-                            label: '合併營收 (億元)',
-                            data: csvRows.slice(1).map(r => parseFloat(r[1]) || 0),
-                            backgroundColor: 'rgba(59, 130, 246, 0.85)',
-                            borderRadius: 6,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'AI 伺服器比重 (%)',
-                            data: csvRows.slice(1).map(r => parseFloat(r[2]) || 0),
-                            type: 'line',
-                            borderColor: '#ec4899',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#ec4899',
-                            tension: 0.1,
-                            yAxisID: 'y1'
-                        }
+                        { label: '廣達合併營收 (USD B)', data: rows.map(r => parseFloat(r[3]) || 0), backgroundColor: 'rgba(59, 130, 246, 0.85)', borderRadius: 4, yAxisID: 'y' },
+                        { label: '廣達 AI 伺服器比重 (%)', data: rows.map(r => { let v = parseFloat(r[1]) || 0; return r[1].includes('%') ? v : v * 100; }), type: 'line', borderColor: '#ef4444', borderWidth: 2.5, yAxisID: 'y1' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 } } } },
-                    scales: {
-                        y: { type: 'linear', position: 'left', grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 } } },
-                        y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { font: { size: 10 }, callback: v => v + '%' } },
-                        x: { ticks: { font: { size: 10 } } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', position: 'left' }, y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => v + '%' } } } }
             });
 
             const ctxMargin = document.getElementById('chart-margin').getContext('2d');
@@ -387,34 +300,9 @@
                 type: 'line',
                 data: {
                     labels: quarters,
-                    datasets: [
-                        {
-                            label: '毛利率 %',
-                            data: csvRows.slice(1).map(r => parseFloat(r[3]) || 0),
-                            borderColor: '#10b981',
-                            borderWidth: 2.5,
-                            fill: false,
-                            tension: 0.1
-                        },
-                        {
-                            label: '營業利益率 %',
-                            data: csvRows.slice(1).map(r => parseFloat(r[4]) || 0),
-                            borderColor: '#f59e0b',
-                            borderWidth: 2.5,
-                            fill: false,
-                            tension: 0.1
-                        }
-                    ]
+                    datasets: [{ label: '族群毛利率中位數 (%)', data: rows.map(r => { let v = parseFloat(r[2]) || 0; return r[2].includes('%') ? v : v * 100; }), borderColor: '#a855f7', fill: false }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { boxWidth: 12, font: { size: 11 } } } },
-                    scales: {
-                        y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, callback: v => v + '%' } },
-                        x: { ticks: { font: { size: 10 } } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { callback: v => v + '%' } } } }
             });
         }
     </script>
